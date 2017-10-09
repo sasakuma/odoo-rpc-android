@@ -1,0 +1,141 @@
+package com.serpentcs.odoorpc.core.utils
+
+import android.accounts.Account
+import android.accounts.AccountManager
+import android.content.Context
+import android.content.DialogInterface
+import android.os.Build
+import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.view.inputmethod.InputMethodManager
+import com.serpentcs.odoorpc.App
+import com.serpentcs.odoorpc.BuildConfig
+import com.serpentcs.odoorpc.R
+import com.serpentcs.odoorpc.core.Odoo
+import com.serpentcs.odoorpc.core.OdooUser
+
+fun Context.createOdooUser(): Boolean {
+    val accountManager = AccountManager.get(this)
+    val account = Account(Odoo.androidName, App.KEY_ACCOUNT_TYPE)
+    val result = accountManager.addAccountExplicitly(
+            account,
+            Odoo.password,
+            Odoo.toBundle
+    )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        accountManager.notifyAccountAuthenticated(account)
+    }
+    return result
+}
+
+fun Context.getOdooUsers(): List<OdooUser> {
+    val manager = AccountManager.get(this)
+    val odooUsers = ArrayList<OdooUser>()
+    manager.getAccountsByType(App.KEY_ACCOUNT_TYPE)
+            .map {
+                Odoo.fromAccount(manager, it)
+            }
+            .forEach { odooUsers += it }
+    return odooUsers.toList()
+}
+
+fun Context.odooUserByAndroidName(androidName: String): OdooUser? {
+    getOdooUsers()
+            .filter { it.androidName == androidName }
+            .forEach { return it }
+    return null
+}
+
+fun Context.getActiveOdooUser(): OdooUser? {
+    getOdooUsers()
+            .filter { it.isActive }
+            .forEach { return it }
+    return null
+}
+
+fun Context.loginOdooUser(odooUser: OdooUser): OdooUser {
+    val user = getActiveOdooUser()
+    if (user != null) {
+        logout(user)
+    }
+    val accountManager = AccountManager.get(this)
+    accountManager.setUserData(odooUser.account, "active", "true")
+
+    return odooUserByAndroidName(odooUser.androidName)!!
+}
+
+fun Context.logout(odooUser: OdooUser) {
+    val accountManager = AccountManager.get(this)
+    accountManager.setUserData(odooUser.account, "active", "false")
+}
+
+fun AppCompatActivity.hideSoftKeyboard() {
+    val view = currentFocus
+    if (view != null) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+}
+
+fun AppCompatActivity.showMessage(
+        title: String? = null,
+        message: String,
+        cancelable: Boolean = false,
+        positiveButton: String = getString(R.string.ok),
+        positiveButtonListener: DialogInterface.OnClickListener? = null
+): AlertDialog = AlertDialog.Builder(this, R.style.AppAlertDialogTheme)
+        .setTitle(title)
+        .setMessage(message)
+        .setCancelable(cancelable)
+        .setPositiveButton(positiveButton, positiveButtonListener)
+        .show()
+
+fun logV(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
+    Log.v(tag, msg)
+} else -1
+
+fun logV(tag: String, msg: String, tr: Throwable): Int = if (BuildConfig.DEBUG) {
+    Log.v(tag, msg, tr)
+} else -1
+
+fun logD(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
+    Log.d(tag, msg)
+} else -1
+
+fun logD(tag: String, msg: String, tr: Throwable): Int = if (BuildConfig.DEBUG) {
+    Log.d(tag, msg, tr)
+} else -1
+
+fun logI(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
+    Log.i(tag, msg)
+} else -1
+
+fun logI(tag: String, msg: String, tr: Throwable): Int = if (BuildConfig.DEBUG) {
+    Log.i(tag, msg, tr)
+} else -1
+
+fun logW(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
+    Log.w(tag, msg)
+} else -1
+
+fun logW(tag: String, msg: String, tr: Throwable): Int = if (BuildConfig.DEBUG) {
+    Log.w(tag, msg, tr)
+} else -1
+
+fun logE(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
+    Log.e(tag, msg)
+} else -1
+
+fun logE(tag: String, msg: String, tr: Throwable): Int = if (BuildConfig.DEBUG) {
+    Log.e(tag, msg, tr)
+} else -1
+
+fun logWTF(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
+    Log.wtf(tag, msg)
+} else -1
+
+fun logWTF(tag: String, msg: String, tr: Throwable): Int = if (BuildConfig.DEBUG) {
+    Log.wtf(tag, msg, tr)
+} else -1
+
