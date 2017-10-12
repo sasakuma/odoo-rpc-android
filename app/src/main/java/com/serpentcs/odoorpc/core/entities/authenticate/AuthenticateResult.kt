@@ -1,11 +1,13 @@
 package com.serpentcs.odoorpc.core.entities.authenticate
 
+import android.os.Bundle
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.serpentcs.odoorpc.core.Odoo
 
-data class Result(
+data class AuthenticateResult(
 
         @field:Expose
         @field:SerializedName("is_superuser")
@@ -17,15 +19,15 @@ data class Result(
 
         @field:Expose
         @field:SerializedName("web.base.url")
-        val webBaseUrl: String = "false",
+        val webBaseUrl: String = String(),
 
         @field:Expose
         @field:SerializedName("session_id")
-        val sessionId: String = "false",
+        val sessionId: String = String(),
 
         @field:Expose
         @field:SerializedName("server_version")
-        val serverVersion: String = "false",
+        val serverVersion: String = String(),
 
         @field:Expose
         @field:SerializedName("is_admin")
@@ -45,7 +47,7 @@ data class Result(
 
         @field:Expose
         @field:SerializedName("name")
-        val name: String = "false",
+        val name: String = String(),
 
         @field:Expose
         @field:SerializedName("server_version_info")
@@ -57,11 +59,11 @@ data class Result(
 
         @field:Expose
         @field:SerializedName("db")
-        val db: String = "false",
+        val db: String = String(),
 
         @field:Expose
         @field:SerializedName("username")
-        val username: String = "false",
+        val username: String = String(),
 
         @field:Expose
         @field:SerializedName("currencies")
@@ -69,5 +71,27 @@ data class Result(
 
         @field:Expose
         @field:SerializedName("web_tours")
-        val webTours: JsonArray = JsonArray()
-)
+        val webTours: JsonArray = JsonArray(),
+
+        var imageSmall: String = String(),
+        var password: String = String()
+) {
+    val androidName: String
+        get() = "$username[$db]"
+
+    val toBundle: Bundle
+        get() = Bundle().apply {
+            putString("protocol", Odoo.protocol.name)
+            putString("host", Odoo.host)
+            putString("login", username)
+            putString("password", password)
+            putString("database", db)
+            putString("serverVersion", serverVersion)
+            putString("isAdmin", admin.toString())
+            putString("id", uid.toString())
+            putString("name", name)
+            putString("imageSmall", imageSmall)
+            putString("context", userContext.toString())
+            putString("active", false.toString())
+        }
+}

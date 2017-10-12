@@ -8,7 +8,7 @@ data class Result(
 
         @field:Expose
         @field:SerializedName("server_serie")
-        val serverSerie: String = "false",
+        val serverSerie: String = String(),
 
         @Suppress("MemberVisibilityCanPrivate")
         @field:Expose
@@ -17,14 +17,14 @@ data class Result(
 
         @field:Expose
         @field:SerializedName("server_version")
-        val serverVersion: String = "false",
+        val serverVersion: String = String(),
 
         @field:Expose
         @field:SerializedName("protocol_version")
         val protocolVersion: Int = 0
 ) {
     val serverVersionType: String
-        get() = if (serverVersionInfo.size() > 0) serverVersionInfo[3].asString else "false"
+        get() = if (serverVersionInfo.size() > 0) serverVersionInfo[3].asString else String()
 
     val isServerVersionEnterprise: Boolean
         get() = if (serverVersionInfo.size() > 0) serverVersionInfo[5].asString.contains("e", true) else false

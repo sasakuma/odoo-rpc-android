@@ -1,9 +1,9 @@
-package com.serpentcs.odoorpc.core.entities.authenticate
+package com.serpentcs.odoorpc.core.entities.searchRead
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class AuthenticateReqBody(
+data class SearchReadReqBody(
 
         @field:Expose
         @field:SerializedName("id")
@@ -19,5 +19,6 @@ data class AuthenticateReqBody(
 
         @field:Expose
         @field:SerializedName("params")
-        val params: AuthenticateParams = AuthenticateParams()
+        val params: SearchReadParams = SearchReadParams()
+
 )

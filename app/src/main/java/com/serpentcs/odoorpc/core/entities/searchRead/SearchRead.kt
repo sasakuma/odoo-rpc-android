@@ -1,16 +1,15 @@
-package com.serpentcs.odoorpc.core.entities.authenticate
+package com.serpentcs.odoorpc.core.entities.searchRead
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.serpentcs.odoorpc.core.entities.HttpError
 import com.serpentcs.odoorpc.core.entities.odooError.OdooError
 
-data class Authenticate(
-
+data class SearchRead(
         @Suppress("MemberVisibilityCanPrivate")
         @field:Expose
         @field:SerializedName("result")
-        val result: AuthenticateResult = AuthenticateResult(),
+        val result: SearchReadResult = SearchReadResult(),
 
         @Suppress("MemberVisibilityCanPrivate")
         @field:Expose

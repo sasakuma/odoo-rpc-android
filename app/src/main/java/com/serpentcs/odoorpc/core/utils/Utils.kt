@@ -9,19 +9,25 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.serpentcs.odoorpc.App
 import com.serpentcs.odoorpc.BuildConfig
 import com.serpentcs.odoorpc.R
 import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.OdooUser
+import com.serpentcs.odoorpc.core.entities.authenticate.AuthenticateResult
 
-fun Context.createOdooUser(): Boolean {
+typealias OdooList = com.serpentcs.odoorpc.core.entities.list.List
+
+fun Context.createOdooUser(authenticateResult: AuthenticateResult): Boolean {
     val accountManager = AccountManager.get(this)
-    val account = Account(Odoo.androidName, App.KEY_ACCOUNT_TYPE)
+    val account = Account(authenticateResult.androidName, App.KEY_ACCOUNT_TYPE)
     val result = accountManager.addAccountExplicitly(
             account,
-            Odoo.password,
-            Odoo.toBundle
+            authenticateResult.password,
+            authenticateResult.toBundle
     )
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         accountManager.notifyAccountAuthenticated(account)
@@ -55,10 +61,12 @@ fun Context.getActiveOdooUser(): OdooUser? {
 }
 
 fun Context.loginOdooUser(odooUser: OdooUser): OdooUser {
-    val user = getActiveOdooUser()
-    if (user != null) {
-        logout(user)
-    }
+    do {
+        val user = getActiveOdooUser()
+        if (user != null) {
+            logout(user)
+        }
+    } while (user != null)
     val accountManager = AccountManager.get(this)
     accountManager.setUserData(odooUser.account, "active", "true")
 
@@ -139,3 +147,5 @@ fun logWTF(tag: String, msg: String, tr: Throwable): Int = if (BuildConfig.DEBUG
     Log.wtf(tag, msg, tr)
 } else -1
 
+fun String.toJsonObject(): JsonObject
+        = Gson().fromJson(this, JsonElement::class.java).asJsonObject

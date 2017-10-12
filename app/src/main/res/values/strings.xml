@@ -10,6 +10,9 @@
     <string name="action_manage_account">Manage Accounts</string>
     <string name="full_name">Name:- N/A</string>
     <string name="email">Email:- N/A</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_exit">Press again to exit</string>
     <string name="protocol">Protocol</string>
     <string name="login_host_hint">Host (e.g. 192.168.0.1:8069)</string>
     <string name="login_host_error">Please, type host URL</string>
@@ -28,7 +31,7 @@
     <string name="login_success">Creating user account&#8230;</string>
     <string name="login_create_account_error">Something went wrong creating user account</string>
 
-    <string name="login_host">269852-10-0-0c4ba9.runbot8.odoo.com</string>
+    <string name="login_host">192.168.43.51:8069</string>
     <string name="login_login">admin</string>
     <string name="login_password">admin</string>
 </resources>

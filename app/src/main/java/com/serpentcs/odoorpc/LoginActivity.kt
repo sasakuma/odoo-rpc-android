@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import com.serpentcs.odoorpc.core.Odoo
+import com.serpentcs.odoorpc.core.entities.authenticate.AuthenticateResult
 import com.serpentcs.odoorpc.core.utils.*
 import com.serpentcs.odoorpc.databinding.ActivityLoginBinding
 
@@ -26,9 +27,8 @@ class LoginActivity : AppCompatActivity() {
         val ADD_ACCOUNT: String = "authenticator_add_account"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        checkForLoggedInUser()
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         setSupportActionBar(binding.tb)
 
@@ -100,11 +100,11 @@ class LoginActivity : AppCompatActivity() {
                     binding.llCheckVersionResult.visibility = View.VISIBLE
                 }
                 if (versionInfo.isSuccessful) {
-                    logD(TAG, versionInfo.toString())
+                    // logD(TAG, versionInfo.toString())
                     if (versionInfo.result.serverVersion in Odoo.supportedOdooVersions) {
                         Odoo.list { list ->
                             if (list.isSuccessful) {
-                                logD(TAG, list.toString())
+                                // logD(TAG, list.toString())
                                 binding.ivSuccess.post {
                                     binding.ivSuccess.visibility = View.VISIBLE
                                 }
@@ -134,7 +134,7 @@ class LoginActivity : AppCompatActivity() {
                                     binding.llLogin.visibility = View.VISIBLE
                                 }
                             } else {
-                                logD(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
+                                logW(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
                                 binding.ivSuccess.post {
                                     binding.ivSuccess.visibility = View.GONE
                                 }
@@ -254,15 +254,15 @@ class LoginActivity : AppCompatActivity() {
                 binding.llError.visibility = View.GONE
             }
 
-            Odoo.login = binding.etLogin.text.toString()
-            Odoo.password = binding.etPassword.text.toString()
-            Odoo.database = selectedDatabase.toString()
-            Odoo.authenticate { authenticate ->
+            val login = binding.etLogin.text.toString()
+            val password = binding.etPassword.text.toString()
+            val database = selectedDatabase.toString()
+            Odoo.authenticate(login, password, database) { authenticate ->
                 if (authenticate.isSuccessful) {
                     binding.tvLoginProgress.post {
                         binding.tvLoginProgress.text = getString(R.string.login_success)
                     }
-                    createAccount()
+                    createAccount(authenticate.result)
                 } else {
                     binding.spProtocol.post {
                         binding.spProtocol.isEnabled = true
@@ -325,17 +325,14 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun createAccount() {
-        object : AsyncTask<Void?, Void?, Boolean>() {
-            override fun doInBackground(vararg p0: Void?) =
-                    if (createOdooUser()) {
-                        val odooUser = odooUserByAndroidName(
-                                Odoo.androidName
-                        )
+    private fun createAccount(result: AuthenticateResult) {
+        object : AsyncTask<AuthenticateResult, Void?, Boolean>() {
+            override fun doInBackground(vararg params: AuthenticateResult) =
+                    if (createOdooUser(params[0])) {
+                        val odooUser = odooUserByAndroidName(result.androidName)
                         if (odooUser != null) {
-                            loginOdooUser(
-                                    odooUser
-                            )
+                            loginOdooUser(odooUser)
+                            Odoo.user = odooUser
                         }
                         true
                     } else {
@@ -364,18 +361,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-    }
-
-    private fun checkForLoggedInUser() {
-        val intent = intent
-        if (intent == null || !intent.hasExtra(ADD_ACCOUNT)) {
-            val activeUser = getActiveOdooUser()
-            if (activeUser != null) {
-                Odoo.initFromUser(activeUser)
-                startMainActivity()
-            }
-        }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, result)
     }
 
     private fun startMainActivity() {

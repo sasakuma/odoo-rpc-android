@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 data class OdooError(
         @field:Expose
         @field:SerializedName("message")
-        val message: String = "false",
+        val message: String = String(),
 
         @field:Expose
         @field:SerializedName("code")

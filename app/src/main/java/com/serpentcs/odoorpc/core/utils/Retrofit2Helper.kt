@@ -1,11 +1,15 @@
 package com.serpentcs.odoorpc.core.utils
 
+import okhttp3.Cookie
+import okhttp3.CookieJar
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class Retrofit2Helper @JvmOverloads constructor(
-        _protocol: Protocol = Protocol.HTTP,
-        _host: String = "false"
+class Retrofit2Helper(
+        _protocol: Protocol,
+        _host: String
 ) {
     companion object {
         @JvmField
@@ -42,6 +46,19 @@ class Retrofit2Helper @JvmOverloads constructor(
                                 "https://"
                             }
                         } + host)
+                        .client(OkHttpClient().newBuilder().cookieJar(object : CookieJar {
+
+                            private var cookies: MutableList<Cookie>? = mutableListOf()
+
+                            override fun saveFromResponse(url: HttpUrl?, cookies: MutableList<Cookie>?) {
+                                if (url.toString().contains("/web/session/authenticate")) {
+                                    this.cookies = cookies
+                                }
+                            }
+
+                            override fun loadForRequest(url: HttpUrl?): MutableList<Cookie>? =
+                                    cookies
+                        }).build())
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
             }
