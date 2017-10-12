@@ -21,6 +21,8 @@ data class VersionInfo(
         val httpError: HttpError = HttpError()
 ) {
     val isSuccessful get() = httpError.code == 0 && odooError.code == 0
+    val isHttpError get() = httpError.code != 0
+    val isOdooError get() = odooError.code != 0
     val errorCode get() = if (httpError.code != 0) httpError.code else odooError.code
     val errorMessage get() = if (httpError.code != 0) httpError.message else odooError.data.message
 }
