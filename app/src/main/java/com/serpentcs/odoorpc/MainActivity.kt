@@ -8,8 +8,11 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Base64
 import com.bumptech.glide.Glide
+import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.utils.NavHeaderViewHolder
 import com.serpentcs.odoorpc.core.utils.getActiveOdooUser
+import com.serpentcs.odoorpc.core.utils.logD
+import com.serpentcs.odoorpc.core.utils.logE
 import com.serpentcs.odoorpc.databinding.ActivityMainBinding
 
 
@@ -114,6 +117,14 @@ class MainActivity : AppCompatActivity() {
                 else -> {
                     true
                 }
+            }
+        }
+
+        Odoo.searchRead("res.partner") { searchRead ->
+            if (searchRead.isSuccessful) {
+                logD(TAG, searchRead.result.records.toString())
+            } else {
+                logE(TAG, searchRead.errorMessage)
             }
         }
     }

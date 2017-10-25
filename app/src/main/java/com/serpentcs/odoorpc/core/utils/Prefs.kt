@@ -3,28 +3,46 @@ package com.serpentcs.odoorpc.core.utils
 import android.content.Context
 import android.content.SharedPreferences
 
-abstract class Prefs(name: String, context: Context) {
+abstract class Prefs(val name: String, val context: Context) {
 
     private val preferences: SharedPreferences
             = context.getSharedPreferences(name, Context.MODE_PRIVATE)
 
-    fun getBoolean(key: String, defValue: Boolean = false): Boolean
+    protected fun getBoolean(key: String, defValue: Boolean = false): Boolean
             = preferences.getBoolean(key, defValue)
 
-    fun putBoolean(key: String, defValue: Boolean = false)
-            = preferences.edit().putBoolean(key, defValue).apply()
+    protected fun putBoolean(key: String, value: Boolean)
+            = preferences.edit().putBoolean(key, value).apply()
 
-    fun getInt(key: String, defValue: Int = 0): Int
+    protected fun getInt(key: String, defValue: Int = 0): Int
             = preferences.getInt(key, defValue)
 
-    fun putInt(key: String, defValue: Int = 0)
-            = preferences.edit().putInt(key, defValue).apply()
+    protected fun putInt(key: String, value: Int)
+            = preferences.edit().putInt(key, value).apply()
 
-    fun getString(key: String, defValue: String = String()): String
+    protected fun getFloat(key: String, defValue: Float = 0f): Float
+            = preferences.getFloat(key, defValue)
+
+    protected fun putFloat(key: String, value: Float)
+            = preferences.edit().putFloat(key, value).apply()
+
+    protected fun getLong(key: String, defValue: Long = 0L): Long
+            = preferences.getLong(key, defValue)
+
+    protected fun putLong(key: String, value: Long)
+            = preferences.edit().putLong(key, value).apply()
+
+    protected fun getString(key: String, defValue: String = String()): String
             = preferences.getString(key, defValue)
 
-    fun putString(key: String, defValue: String = String())
-            = preferences.edit().putString(key, defValue).apply()
+    protected fun putString(key: String, value: String)
+            = preferences.edit().putString(key, value).apply()
+
+    protected fun getStringSet(key: String, defValue: MutableSet<String> = mutableSetOf()): MutableSet<String>
+            = preferences.getStringSet(key, defValue)
+
+    protected fun putStringSet(key: String, value: MutableSet<String>)
+            = preferences.edit().putStringSet(key, value).apply()
 
     fun clear() = preferences.edit().clear().apply()
 }

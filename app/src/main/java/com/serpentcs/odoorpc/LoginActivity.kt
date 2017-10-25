@@ -31,50 +31,160 @@ class LoginActivity : AppCompatActivity() {
         super.onPostCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         setSupportActionBar(binding.tb)
+        supportActionBar?.hide()
 
         binding.tlHost.post {
             binding.tlHost.isErrorEnabled = false
         }
 
-        binding.etHost.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
+        if (resources.getBoolean(R.bool.self_hosted_url)) {
+            binding.etHost.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(p0: Editable?) {
+                    binding.tlHost.post {
+                        binding.tlHost.isErrorEnabled = false
+                    }
+                }
+
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+            })
+
+            binding.bnCheckVersion.setOnClickListener {
+                if (binding.etHost.text.toString().isEmpty()) {
+                    binding.tlHost.error = getString(R.string.login_host_error)
+                    return@setOnClickListener
+                }
+
+                hideSoftKeyboard()
+                binding.spProtocol.post {
+                    binding.spProtocol.isEnabled = false
+                }
                 binding.tlHost.post {
-                    binding.tlHost.isErrorEnabled = false
+                    binding.tlHost.isEnabled = false
+                }
+                binding.bnCheckVersion.post {
+                    binding.bnCheckVersion.visibility = View.GONE
+                }
+                binding.llCheckVersionProgress.post {
+                    binding.llCheckVersionProgress.visibility = View.VISIBLE
+                }
+                binding.llCheckVersionResult.post {
+                    binding.llCheckVersionResult.visibility = View.GONE
+                }
+                resetLoginLayout()
+                binding.llLogin.post {
+                    binding.llLogin.visibility = View.GONE
+                }
+
+                Odoo.protocol = when (binding.spProtocol.selectedItemPosition) {
+                    0 -> {
+                        Retrofit2Helper.Companion.Protocol.HTTP
+                    }
+                    else -> {
+                        Retrofit2Helper.Companion.Protocol.HTTPS
+                    }
+                }
+                Odoo.host = binding.etHost.text.toString()
+                Odoo.versionInfo { versionInfo ->
+                    binding.spProtocol.post {
+                        binding.spProtocol.isEnabled = true
+                    }
+                    binding.tlHost.post {
+                        binding.tlHost.isEnabled = true
+                    }
+                    binding.bnCheckVersion.post {
+                        binding.bnCheckVersion.visibility = View.VISIBLE
+                    }
+                    binding.llCheckVersionProgress.post {
+                        binding.llCheckVersionProgress.visibility = View.GONE
+                    }
+                    binding.llCheckVersionResult.post {
+                        binding.llCheckVersionResult.visibility = View.VISIBLE
+                    }
+                    if (versionInfo.isSuccessful) {
+                        // logD(TAG, versionInfo.toString())
+                        if (versionInfo.result.serverVersion in Odoo.supportedOdooVersions) {
+                            Odoo.list { list ->
+                                if (list.isSuccessful) {
+                                    // logD(TAG, list.toString())
+                                    binding.ivSuccess.post {
+                                        binding.ivSuccess.visibility = View.VISIBLE
+                                    }
+                                    binding.ivFail.post {
+                                        binding.ivFail.visibility = View.GONE
+                                    }
+                                    binding.tvServerMessage.post {
+                                        binding.tvServerMessage.text = getString(
+                                                R.string.login_server_success,
+                                                versionInfo.result.serverVersion
+                                        )
+                                    }
+                                    binding.spDatabase.post {
+                                        binding.spDatabase.adapter = ArrayAdapter(
+                                                this@LoginActivity,
+                                                R.layout.support_simple_spinner_dropdown_item,
+                                                list.result
+                                        )
+
+                                        binding.llDatabase.visibility =
+                                                if (list.result.size == 1) {
+                                                    View.GONE
+                                                } else {
+                                                    View.VISIBLE
+                                                }
+                                    }
+                                    binding.llLogin.post {
+                                        binding.llLogin.visibility = View.VISIBLE
+                                    }
+                                } else {
+                                    logW(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
+                                    binding.ivSuccess.post {
+                                        binding.ivSuccess.visibility = View.GONE
+                                    }
+                                    binding.ivFail.post {
+                                        binding.ivFail.visibility = View.VISIBLE
+                                    }
+                                    binding.tvServerMessage.post {
+                                        binding.tvServerMessage.text = list.errorMessage
+                                    }
+                                }
+                            }
+                        } else {
+                            binding.ivSuccess.post {
+                                binding.ivSuccess.visibility = View.GONE
+                            }
+                            binding.ivFail.post {
+                                binding.ivFail.visibility = View.VISIBLE
+                            }
+                            binding.tvServerMessage.post {
+                                binding.tvServerMessage.text = getString(
+                                        R.string.login_server_error,
+                                        versionInfo.result.serverVersion
+                                )
+                            }
+                        }
+                    } else {
+                        logW(TAG, "Error: " + versionInfo.errorCode + ": " + versionInfo.errorMessage)
+                        binding.ivSuccess.post {
+                            binding.ivSuccess.visibility = View.GONE
+                        }
+                        binding.ivFail.post {
+                            binding.ivFail.visibility = View.VISIBLE
+                        }
+                        binding.tvServerMessage.post {
+                            binding.tvServerMessage.text = versionInfo.errorMessage
+                        }
+                    }
                 }
             }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
-        })
-
-        binding.bnCheckVersion.setOnClickListener {
-            if (binding.etHost.text.toString().isEmpty()) {
-                binding.tlHost.error = getString(R.string.login_host_error)
-                return@setOnClickListener
-            }
-
-            hideSoftKeyboard()
-            binding.spProtocol.post {
-                binding.spProtocol.isEnabled = false
-            }
-            binding.tlHost.post {
-                binding.tlHost.isEnabled = false
-            }
-            binding.bnCheckVersion.post {
-                binding.bnCheckVersion.visibility = View.GONE
+        } else {
+            binding.llCheckVersion.post {
+                binding.llCheckVersion.visibility = View.GONE
             }
             binding.llCheckVersionProgress.post {
                 binding.llCheckVersionProgress.visibility = View.VISIBLE
             }
-            binding.llCheckVersionResult.post {
-                binding.llCheckVersionResult.visibility = View.GONE
-            }
-            resetLoginLayout()
-            binding.llLogin.post {
-                binding.llLogin.visibility = View.GONE
-            }
-
-            Odoo.protocol = when (binding.spProtocol.selectedItemPosition) {
+            Odoo.protocol = when (resources.getInteger(R.integer.protocol)) {
                 0 -> {
                     Retrofit2Helper.Companion.Protocol.HTTP
                 }
@@ -82,48 +192,23 @@ class LoginActivity : AppCompatActivity() {
                     Retrofit2Helper.Companion.Protocol.HTTPS
                 }
             }
-            Odoo.host = binding.etHost.text.toString()
+            Odoo.host = getString(R.string.host_url)
             Odoo.versionInfo { versionInfo ->
-                binding.spProtocol.post {
-                    binding.spProtocol.isEnabled = true
-                }
-                binding.tlHost.post {
-                    binding.tlHost.isEnabled = true
-                }
-                binding.bnCheckVersion.post {
-                    binding.bnCheckVersion.visibility = View.VISIBLE
-                }
                 binding.llCheckVersionProgress.post {
                     binding.llCheckVersionProgress.visibility = View.GONE
-                }
-                binding.llCheckVersionResult.post {
-                    binding.llCheckVersionResult.visibility = View.VISIBLE
                 }
                 if (versionInfo.isSuccessful) {
                     // logD(TAG, versionInfo.toString())
                     if (versionInfo.result.serverVersion in Odoo.supportedOdooVersions) {
                         Odoo.list { list ->
                             if (list.isSuccessful) {
-                                // logD(TAG, list.toString())
-                                binding.ivSuccess.post {
-                                    binding.ivSuccess.visibility = View.VISIBLE
-                                }
-                                binding.ivFail.post {
-                                    binding.ivFail.visibility = View.GONE
-                                }
-                                binding.tvServerMessage.post {
-                                    binding.tvServerMessage.text = getString(
-                                            R.string.login_server_success,
-                                            versionInfo.result.serverVersion
-                                    )
-                                }
                                 binding.spDatabase.post {
                                     binding.spDatabase.adapter = ArrayAdapter(
                                             this@LoginActivity,
                                             R.layout.support_simple_spinner_dropdown_item,
                                             list.result
                                     )
-                                    binding.spDatabase.visibility =
+                                    binding.llDatabase.visibility =
                                             if (list.result.size == 1) {
                                                 View.GONE
                                             } else {
@@ -135,42 +220,18 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             } else {
                                 logW(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
-                                binding.ivSuccess.post {
-                                    binding.ivSuccess.visibility = View.GONE
-                                }
-                                binding.ivFail.post {
-                                    binding.ivFail.visibility = View.VISIBLE
-                                }
-                                binding.tvServerMessage.post {
-                                    binding.tvServerMessage.text = list.errorMessage
-                                }
+                                showExitMessage(list.errorMessage)
                             }
                         }
                     } else {
-                        binding.ivSuccess.post {
-                            binding.ivSuccess.visibility = View.GONE
-                        }
-                        binding.ivFail.post {
-                            binding.ivFail.visibility = View.VISIBLE
-                        }
-                        binding.tvServerMessage.post {
-                            binding.tvServerMessage.text = getString(
-                                    R.string.login_server_error,
-                                    versionInfo.result.serverVersion
-                            )
-                        }
+                        showExitMessage(getString(
+                                R.string.login_server_error,
+                                versionInfo.result.serverVersion
+                        ))
                     }
                 } else {
-                    logD(TAG, "Error: " + versionInfo.errorCode + ": " + versionInfo.errorMessage)
-                    binding.ivSuccess.post {
-                        binding.ivSuccess.visibility = View.GONE
-                    }
-                    binding.ivFail.post {
-                        binding.ivFail.visibility = View.VISIBLE
-                    }
-                    binding.tvServerMessage.post {
-                        binding.tvServerMessage.text = versionInfo.errorMessage
-                    }
+                    logW(TAG, "Error: " + versionInfo.errorCode + ": " + versionInfo.errorMessage)
+                    showExitMessage(versionInfo.errorMessage)
                 }
             }
         }

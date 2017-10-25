@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- if self_hosted_url set to true, it allows user to manually set protocol and host URL. -->
+    <!-- if false then define your protocol and host URL below. -->
+    <bool name="self_hosted_url">true</bool>
+
+    <!-- if host URL starts with http:// then set protocol to 0. -->
+    <!-- if host URL starts with https:// then set protocol value to 1.-->
+    <integer name="protocol">0</integer>
+
+    <!-- set your host_url without leading http:// or https:// -->
+    <string name="host_url">192.168.43.12:8069</string>
+</resources>

@@ -26,6 +26,8 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/AppTheme.AppBarOverlay"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -35,63 +37,91 @@
                 android:padding="@dimen/default_linear_layout_padding">
 
                 <LinearLayout
+                    android:id="@+id/llBanner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_android_white_192dp" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/default_linear_layout_padding" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llCheckVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:orientation="vertical">
 
-                        <TextView
-                            style="@style/DisabledHintTextAppearance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/protocol" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/DisabledHintTextAppearance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/protocol" />
+
+                            <Space
+                                android:layout_width="wrap_content"
+                                android:layout_height="6dp" />
+
+                            <Spinner
+                                android:id="@+id/spProtocol"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:entries="@array/protocols"
+                                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+                        </LinearLayout>
 
                         <Space
                             android:layout_width="wrap_content"
-                            android:layout_height="6dp" />
+                            android:layout_height="@dimen/default_gap" />
 
-                        <Spinner
-                            android:id="@+id/spProtocol"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/tlHost"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:entries="@array/protocols" />
+                            android:layout_height="wrap_content">
 
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/etHost"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/login_host_hint"
+                                android:imeOptions="actionDone"
+                                android:inputType="textWebEmailAddress"
+                                android:text="@string/host_url" />
+
+                        </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
 
-                    <Space
+                    <Button
+                        android:id="@+id/bnCheckVersion"
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/default_gap" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/login_check_odoo_version"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+                        android:textColor="@color/icons"
+                        android:visibility="visible" />
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/tlHost"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <android.support.design.widget.TextInputEditText
-                            android:id="@+id/etHost"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/login_host_hint"
-                            android:imeOptions="actionDone"
-                            android:inputType="textWebEmailAddress"
-                            android:text="@string/login_host" />
-
-                    </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
-
-                <Button
-                    android:id="@+id/bnCheckVersion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/login_check_odoo_version"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Colored"
-                    android:visibility="visible" />
 
                 <LinearLayout
                     android:id="@+id/llCheckVersionProgress"
@@ -238,7 +268,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/login_submit"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Colored" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+                        android:textColor="@color/icons" />
 
                     <LinearLayout
                         android:id="@+id/llProgress"

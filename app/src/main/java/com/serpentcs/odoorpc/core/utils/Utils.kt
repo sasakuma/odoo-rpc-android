@@ -5,6 +5,7 @@ import android.accounts.AccountManager
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
+import android.support.v13.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -86,18 +87,30 @@ fun AppCompatActivity.hideSoftKeyboard() {
     }
 }
 
+var alertDialog: AlertDialog? = null
+
 fun AppCompatActivity.showMessage(
         title: String? = null,
         message: String,
         cancelable: Boolean = false,
         positiveButton: String = getString(R.string.ok),
-        positiveButtonListener: DialogInterface.OnClickListener? = null
-): AlertDialog = AlertDialog.Builder(this, R.style.AppAlertDialogTheme)
-        .setTitle(title)
-        .setMessage(message)
-        .setCancelable(cancelable)
-        .setPositiveButton(positiveButton, positiveButtonListener)
-        .show()
+        positiveButtonListener: (dialog: DialogInterface?, which: Int) -> Unit = { _, _ -> }
+): AlertDialog {
+    alertDialog?.dismiss()
+    alertDialog = AlertDialog.Builder(this, R.style.AppAlertDialogTheme)
+            .setTitle(title)
+            .setMessage(message)
+            .setCancelable(cancelable)
+            .setPositiveButton(positiveButton) { dialog: DialogInterface?, which: Int -> positiveButtonListener(dialog, which) }
+            .show()
+    return alertDialog!!
+}
+
+fun AppCompatActivity.showExitMessage(message: String) {
+    showMessage(getString(R.string.fatal_error), message, false, getString(R.string.exit)) { _, _ ->
+        ActivityCompat.finishAffinity(this)
+    }
+}
 
 fun logV(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
     Log.v(tag, msg)

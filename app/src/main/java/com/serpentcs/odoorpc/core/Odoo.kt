@@ -81,7 +81,7 @@ object Odoo {
             return field
         }
 
-    val supportedOdooVersions = listOf("10.0")
+    val supportedOdooVersions = listOf("10.0", "10.saas~16+e")
 
     fun versionInfo(callback: (VersionInfo) -> Unit) {
         val request = retrofit.create(VersionInfoRequest::class.java)
