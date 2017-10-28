@@ -2,13 +2,14 @@
 
 buildscript {
     ext {
-        gradle_version = '2.3.3'
-        support_library_version = '26.0.2'
+        gradle_version = '3.0.0'
+        support_library_version = '26.1.0'
         gms_version = '11.0.4'
         kotlin_version = '1.1.51'
         retrofit_version = '2.3.0'
     }
     repositories {
+        google()
         jcenter()
     }
     dependencies {
@@ -23,9 +24,9 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         jcenter()
         mavenCentral()
-        maven { url "https://maven.google.com" }
     }
 }
 
