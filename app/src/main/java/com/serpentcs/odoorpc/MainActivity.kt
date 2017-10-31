@@ -69,6 +69,11 @@ class MainActivity : AppCompatActivity() {
                             .load(byteArray)
                             .asBitmap()
                             .into(navHeader.pic)
+                } else {
+                    Glide.with(this)
+                            .load(app.getLetterTile(user.name))
+                            .asBitmap()
+                            .into(navHeader.pic)
                 }
             }
         }

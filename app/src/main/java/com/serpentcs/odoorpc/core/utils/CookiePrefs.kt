@@ -10,22 +10,23 @@ class CookiePrefs(context: Context) : Prefs(TAG, context) {
     companion object {
         @JvmField
         val TAG = "CookiePrefs"
-
-        private val Cookies = "Cookies"
     }
 
     private val gson = Gson()
     private val type = object : TypeToken<ArrayList<ClonedCookie>>() {}.type
 
     fun getCookies(): MutableList<Cookie> {
-        val cookiesStr = getString(Cookies)
-        if (cookiesStr.isNotEmpty()) {
-            val clonedCookies: ArrayList<ClonedCookie> = gson.fromJson(cookiesStr, type)
-            val cookies = arrayListOf<Cookie>()
-            for (clonedCookie in clonedCookies) {
-                cookies += clonedCookie.toCookie()
+        val activeUser = context.getActiveOdooUser()
+        if (activeUser != null) {
+            val cookiesStr = getString(activeUser.androidName)
+            if (cookiesStr.isNotEmpty()) {
+                val clonedCookies: ArrayList<ClonedCookie> = gson.fromJson(cookiesStr, type)
+                val cookies = arrayListOf<Cookie>()
+                for (clonedCookie in clonedCookies) {
+                    cookies += clonedCookie.toCookie()
+                }
+                return cookies
             }
-            return cookies
         }
         return arrayListOf()
     }
@@ -38,6 +39,9 @@ class CookiePrefs(context: Context) : Prefs(TAG, context) {
             }
         }
         val cookiesStr = gson.toJson(clonedCookies, type)
-        putString(Cookies, cookiesStr)
+        val activeUser = context.getActiveOdooUser()
+        if (activeUser != null) {
+            putString(activeUser.androidName, cookiesStr)
+        }
     }
 }

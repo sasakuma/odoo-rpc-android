@@ -2,6 +2,7 @@ package com.serpentcs.odoorpc
 
 import android.app.Application
 import com.serpentcs.odoorpc.core.utils.CookiePrefs
+import com.serpentcs.odoorpc.core.utils.LetterTileProvider
 import com.serpentcs.odoorpc.core.utils.Retrofit2Helper
 
 class App : Application() {
@@ -15,10 +16,15 @@ class App : Application() {
     }
 
     lateinit var cookiePrefs: CookiePrefs
+    private lateinit var letterTileProvider: LetterTileProvider
 
     override fun onCreate() {
         super.onCreate()
         Retrofit2Helper.app = this
         cookiePrefs = CookiePrefs(this)
+        letterTileProvider = LetterTileProvider(this)
     }
+
+    fun getLetterTile(displayName: String): ByteArray =
+            letterTileProvider.getLetterTile(displayName)
 }
