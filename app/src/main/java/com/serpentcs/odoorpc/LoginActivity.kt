@@ -1,5 +1,6 @@
 package com.serpentcs.odoorpc
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.entities.authenticate.AuthenticateResult
@@ -33,6 +35,14 @@ class LoginActivity : AppCompatActivity() {
         setSupportActionBar(binding.tb)
         supportActionBar?.hide()
 
+        binding.spProtocol.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                resetLoginLayout()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+
         binding.tlHost.post {
             binding.tlHost.isErrorEnabled = false
         }
@@ -42,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
                 override fun afterTextChanged(p0: Editable?) {
                     binding.tlHost.post {
                         binding.tlHost.isErrorEnabled = false
+                        resetLoginLayout()
                     }
                 }
 
@@ -70,6 +81,12 @@ class LoginActivity : AppCompatActivity() {
                 }
                 binding.llCheckVersionResult.post {
                     binding.llCheckVersionResult.visibility = View.GONE
+                }
+                binding.ivSuccess.post {
+                    binding.ivSuccess.visibility = View.GONE
+                }
+                binding.ivFail.post {
+                    binding.ivFail.visibility = View.GONE
                 }
                 resetLoginLayout()
                 binding.llLogin.post {
@@ -110,9 +127,6 @@ class LoginActivity : AppCompatActivity() {
                                     binding.ivSuccess.post {
                                         binding.ivSuccess.visibility = View.VISIBLE
                                     }
-                                    binding.ivFail.post {
-                                        binding.ivFail.visibility = View.GONE
-                                    }
                                     binding.tvServerMessage.post {
                                         binding.tvServerMessage.text = getString(
                                                 R.string.login_server_success,
@@ -120,12 +134,13 @@ class LoginActivity : AppCompatActivity() {
                                         )
                                     }
                                     binding.spDatabase.post {
-                                        binding.spDatabase.adapter = ArrayAdapter(
+                                        binding.spDatabase.adapter = ArrayAdapter<String>(
                                                 this@LoginActivity,
-                                                R.layout.support_simple_spinner_dropdown_item,
+                                                R.layout.support_simple_spinner_dropdown_item_dark,
                                                 list.result
                                         )
-
+                                    }
+                                    binding.llDatabase.post {
                                         binding.llDatabase.visibility =
                                                 if (list.result.size == 1) {
                                                     View.GONE
@@ -138,9 +153,6 @@ class LoginActivity : AppCompatActivity() {
                                     }
                                 } else {
                                     logW(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
-                                    binding.ivSuccess.post {
-                                        binding.ivSuccess.visibility = View.GONE
-                                    }
                                     binding.ivFail.post {
                                         binding.ivFail.visibility = View.VISIBLE
                                     }
@@ -203,11 +215,13 @@ class LoginActivity : AppCompatActivity() {
                         Odoo.list { list ->
                             if (list.isSuccessful) {
                                 binding.spDatabase.post {
-                                    binding.spDatabase.adapter = ArrayAdapter(
+                                    binding.spDatabase.adapter = ArrayAdapter<String>(
                                             this@LoginActivity,
-                                            R.layout.support_simple_spinner_dropdown_item,
+                                            R.layout.support_simple_spinner_dropdown_item_dark,
                                             list.result
                                     )
+                                }
+                                binding.llDatabase.post {
                                     binding.llDatabase.visibility =
                                             if (list.result.size == 1) {
                                                 View.GONE
@@ -365,19 +379,21 @@ class LoginActivity : AppCompatActivity() {
             binding.tlLogin.isErrorEnabled = false
             binding.tlLogin.isEnabled = true
         }
-        // binding.etLogin.post {
-        //     binding.etLogin.text.clear()
-        // }
+        binding.etLogin.post {
+            binding.etLogin.text.clear()
+        }
         binding.tlPassword.post {
             binding.tlPassword.isErrorEnabled = false
             binding.tlPassword.isEnabled = true
         }
-        // binding.etPassword.post {
-        //     binding.etPassword.text.clear()
-        // }
-        // binding.spDatabase.post {
-        //     binding.spDatabase.adapter = null
-        // }
+        binding.etPassword.post {
+            binding.etPassword.text.clear()
+        }
+        binding.spDatabase.post {
+            @Suppress("UNCHECKED_CAST")
+            val adapter = binding.spDatabase.adapter as ArrayAdapter<String>
+            adapter.clear()
+        }
         binding.spDatabase.post {
             binding.spDatabase.isEnabled = true
         }
@@ -386,6 +402,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private fun createAccount(result: AuthenticateResult) {
         object : AsyncTask<AuthenticateResult, Void?, Boolean>() {
             override fun doInBackground(vararg params: AuthenticateResult) =
@@ -411,14 +428,16 @@ class LoginActivity : AppCompatActivity() {
                         startMainActivity()
                     }
                 } else {
-                    binding.llProgress.post {
-                        binding.llProgress.visibility = View.GONE
-                    }
-                    binding.llError.post {
-                        binding.llError.visibility = View.VISIBLE
-                    }
-                    binding.tvLoginError.post {
-                        binding.tvLoginError.text = getString(R.string.login_create_account_error)
+                    if (isNotFinishingExt()) {
+                        binding.llProgress.post {
+                            binding.llProgress.visibility = View.GONE
+                        }
+                        binding.llError.post {
+                            binding.llError.visibility = View.VISIBLE
+                        }
+                        binding.tvLoginError.post {
+                            binding.tvLoginError.text = getString(R.string.login_create_account_error)
+                        }
                     }
                 }
             }

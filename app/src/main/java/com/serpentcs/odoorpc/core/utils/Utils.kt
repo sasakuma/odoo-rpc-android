@@ -2,6 +2,7 @@ package com.serpentcs.odoorpc.core.utils
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
@@ -85,6 +86,12 @@ fun AppCompatActivity.hideSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+}
+
+fun Activity.isNotFinishingExt(): Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+    !isFinishing && !isDestroyed
+} else {
+    !isFinishing
 }
 
 var alertDialog: AlertDialog? = null

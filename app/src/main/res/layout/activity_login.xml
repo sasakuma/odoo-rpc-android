@@ -212,8 +212,7 @@
                             android:hint="@string/login_username_hint"
                             android:imeOptions="actionNext"
                             android:inputType="textWebEmailAddress"
-                            android:nextFocusDown="@+id/etPassword"
-                            android:text="@string/login_login" />
+                            android:nextFocusDown="@+id/etPassword" />
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -229,8 +228,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/login_password_hint"
                             android:imeOptions="actionDone"
-                            android:inputType="textPassword"
-                            android:text="@string/login_password" />
+                            android:inputType="textPassword" />
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -254,7 +252,8 @@
                             android:id="@+id/spDatabase"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            tools:entries="@array/databases" />
+                            android:entries="@array/databases"
+                            tools:entries="@array/dummy_databases" />
 
                         <Space
                             android:layout_width="wrap_content"

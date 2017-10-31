@@ -14,19 +14,6 @@ class SplashActivity : AppCompatActivity() {
         if (user != null) {
             Odoo.user = user
             startMainActivity()
-//            Odoo.authenticate(
-//                    user.login, user.password, user.database, true
-//            ) { authenticate ->
-//                if (authenticate.isSuccessful) {
-//                    startMainActivity()
-//                } else {
-//                    if (authenticate.isHttpError) {
-//                        TODO("Handle Server Down Error")
-//                    } else {
-//                        TODO("Handle Odoo Error")
-//                    }
-//                }
-//            }
         } else {
             startLoginActivity()
         }
