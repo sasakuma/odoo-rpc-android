@@ -1,5 +1,6 @@
 package com.serpentcs.odoorpc
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -8,11 +9,9 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Base64
 import com.bumptech.glide.Glide
+import com.serpentcs.odoorpc.authenticator.ProfileActivity
 import com.serpentcs.odoorpc.core.Odoo
-import com.serpentcs.odoorpc.core.utils.NavHeaderViewHolder
-import com.serpentcs.odoorpc.core.utils.getActiveOdooUser
-import com.serpentcs.odoorpc.core.utils.logD
-import com.serpentcs.odoorpc.core.utils.logE
+import com.serpentcs.odoorpc.core.utils.*
 import com.serpentcs.odoorpc.databinding.ActivityMainBinding
 
 
@@ -108,6 +107,11 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_profile -> {
+                    if (getActiveOdooUser() != null) {
+                        startActivity(Intent(this, ProfileActivity::class.java))
+                    } else {
+                        showMessage(message = getString(R.string.error_active_user))
+                    }
                     true
                 }
                 R.id.nav_settings -> {

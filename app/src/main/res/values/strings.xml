@@ -32,4 +32,11 @@
     <string name="login_progress">Authenticating&#8230;</string>
     <string name="login_success">Creating user account&#8230;</string>
     <string name="login_create_account_error">Something went wrong creating user account</string>
+    <string name="error_active_user">There is no active user found!</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_login">Login</string>
+    <string name="profile_server_url">Server URL</string>
+    <string name="profile_database">Database</string>
+    <string name="profile_odoo_version">Odoo Version</string>
+    <string name="profile_timezone">Timezone</string>
 </resources>

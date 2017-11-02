@@ -1,6 +1,7 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="default_linear_layout_padding">16dp</dimen>
+    <dimen name="app_bar_height">256dp</dimen>
 
     <!-- The default letter tile text size -->
     <dimen name="tile_letter_font_size">42sp</dimen>

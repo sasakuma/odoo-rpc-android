@@ -164,7 +164,7 @@ object Odoo {
                     authenticateBody.result.password = password
                     if (!quick) {
                         searchRead(
-                                "res.users", listOf("image_small"),
+                                "res.users", listOf("image"),
                                 listOf(listOf("id", "=", authenticateBody.result.uid)),
                                 0, 0, "id DESC", authenticateBody.result.userContext
                         ) { searchRead ->
@@ -172,7 +172,7 @@ object Odoo {
                                 if (searchRead.result.records.size() > 0) {
                                     val row = searchRead.result.records[0].asJsonObject
                                     authenticateBody.result.imageSmall =
-                                            row.get("image_small").asString
+                                            row.get("image").asString
                                 }
                             }
                             callback(authenticateBody)
