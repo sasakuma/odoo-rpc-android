@@ -40,14 +40,14 @@
                     android:id="@+id/header_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/full_name"
+                    android:text="@string/profile_full_name"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
                 <TextView
                     android:id="@+id/header_details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/email" />
+                    android:text="@string/profile_email" />
             </LinearLayout>
 
             <View

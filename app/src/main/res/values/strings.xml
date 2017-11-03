@@ -10,12 +10,12 @@
     <string name="action_profile">Profile</string>
     <string name="action_add_account">Add account</string>
     <string name="action_manage_account">Manage Accounts</string>
-    <string name="full_name">Name:- N/A</string>
-    <string name="email">Email:- N/A</string>
+    <string name="profile_full_name">Name:- N/A</string>
+    <string name="profile_email">Email:- N/A</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="navigation_exit">Press again to exit</string>
-    <string name="protocol">Protocol</string>
+    <string name="login_protocol">Protocol</string>
     <string name="login_host_hint">Host (e.g. 192.168.0.1:8069)</string>
     <string name="login_host_error">Please, type host URL</string>
     <string name="login_check_odoo_version">Check Server Compatibility</string>
