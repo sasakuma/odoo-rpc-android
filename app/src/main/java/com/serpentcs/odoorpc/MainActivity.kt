@@ -13,6 +13,7 @@ import com.serpentcs.odoorpc.authenticator.ProfileActivity
 import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.utils.*
 import com.serpentcs.odoorpc.databinding.ActivityMainBinding
+import com.serpentcs.odoorpc.preferences.SettingsActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -115,6 +116,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_settings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
                     true
                 }
                 R.id.nav_add_account -> {

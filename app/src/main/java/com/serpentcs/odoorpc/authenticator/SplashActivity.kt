@@ -1,8 +1,9 @@
-package com.serpentcs.odoorpc
+package com.serpentcs.odoorpc.authenticator
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.serpentcs.odoorpc.MainActivity
 import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.utils.getActiveOdooUser
 

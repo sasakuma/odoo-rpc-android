@@ -39,4 +39,17 @@
     <string name="profile_database">Database</string>
     <string name="profile_odoo_version">Odoo Version</string>
     <string name="profile_timezone">Timezone</string>
+    <string name="preference_build_category">Version Info</string>
+    <string name="preference_build_key">build</string>
+    <string name="preference_build_title">Build Version</string>
+    <string name="preference_build_summary">Version %s</string>
+    <string name="preference_about_category">About</string>
+    <string name="preference_organization_key">organization</string>
+    <string name="preference_organization_title">Developed By</string>
+    <string name="preference_privacy_policy_key">privacy</string>
+    <string name="preference_privacy_policy_title">Privacy Policy</string>
+    <string name="preference_contact_key">contact</string>
+    <string name="preference_contact_title">Contact Us</string>
+    <string name="preference_prompt_email_intent">Send email using</string>
+    <string name="preference_error_email_intent">There\'s no application found to open email links</string>
 </resources>

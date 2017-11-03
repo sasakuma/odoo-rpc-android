@@ -15,11 +15,12 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var app: App
     private lateinit var binding: ActivityProfileBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         app = application as App
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val user = getActiveOdooUser()
         if (user != null) {

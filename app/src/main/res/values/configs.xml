@@ -10,4 +10,16 @@
 
     <!-- set your host_url without leading http:// or https:// -->
     <string name="host_url">192.168.43.51:8069</string>
+
+    <!-- organization name -->
+    <string name="preference_organization_summary">Odoo S.A.</string>
+
+    <!-- organization website -->
+    <string name="preference_organization_website">https://www.odoo.com/</string>
+
+    <!-- organization privacy policy -->
+    <string name="preference_privacy_policy_url">https://www.odoo.com/page/odoo-privacy-policy</string>
+
+    <!-- organization email -->
+    <string name="preference_contact_summary">contact@odoo.com</string>
 </resources>

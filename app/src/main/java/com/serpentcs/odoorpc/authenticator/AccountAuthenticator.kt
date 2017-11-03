@@ -4,7 +4,6 @@ import android.accounts.*
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.serpentcs.odoorpc.LoginActivity
 
 class AccountAuthenticator(
         private val context: Context

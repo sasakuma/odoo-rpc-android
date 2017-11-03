@@ -1,4 +1,4 @@
-package com.serpentcs.odoorpc
+package com.serpentcs.odoorpc.authenticator
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -12,6 +12,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.serpentcs.odoorpc.MainActivity
+import com.serpentcs.odoorpc.R
 import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.entities.authenticate.AuthenticateResult
 import com.serpentcs.odoorpc.core.utils.*
