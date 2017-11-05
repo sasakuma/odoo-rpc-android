@@ -52,4 +52,6 @@
     <string name="preference_contact_title">Contact Us</string>
     <string name="preference_prompt_email_intent">Send email using</string>
     <string name="preference_error_email_intent">There\'s no application found to open email links</string>
+    <string name="recycler_empty_title">Your records appear here</string>
+    <string name="recycler_error_retry">Retry</string>
 </resources>

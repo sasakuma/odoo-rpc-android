@@ -48,7 +48,7 @@ data class ClonedCookie(
         @JvmField
         val TAG = "ClonedCookie"
 
-        fun fromCookie(cookie: Cookie): ClonedCookie = ClonedCookie(
+        fun fromCookie(cookie: Cookie) = ClonedCookie(
                 cookie.name(), cookie.value(),
                 cookie.domain(), cookie.path(),
                 cookie.expiresAt(), cookie.secure(),

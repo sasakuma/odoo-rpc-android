@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Base64
 import com.bumptech.glide.Glide
+import com.serpentcs.odoorpc.authenticator.ManageAccountActivity
 import com.serpentcs.odoorpc.authenticator.ProfileActivity
 import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.utils.*
@@ -123,6 +124,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_manage_account -> {
+                    startActivity(Intent(this, ManageAccountActivity::class.java))
                     true
                 }
                 else -> {
