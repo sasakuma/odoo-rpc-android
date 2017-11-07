@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
@@ -14,8 +13,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tint="@color/colorSecondaryText"
-            app:srcCompat="@drawable/ic_format_list_bulleted_black_24dp"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            tools:srcCompat="@drawable/ic_format_list_bulleted_black_24dp" />
 
         <Space
             android:layout_width="0dp"
@@ -26,8 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/recycler_empty_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/colorSecondaryText" />
+            android:textColor="@color/colorSecondaryText"
+            tools:text="@string/recycler_empty_title" />
     </LinearLayout>
 </layout>

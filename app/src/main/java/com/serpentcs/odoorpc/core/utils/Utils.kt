@@ -119,6 +119,12 @@ fun AppCompatActivity.showExitMessage(message: String) {
     }
 }
 
+fun String.trimFalse(): String = if (this != "false") {
+    this
+} else {
+    String()
+}
+
 fun logV(tag: String, msg: String): Int = if (BuildConfig.DEBUG) {
     Log.v(tag, msg)
 } else -1
