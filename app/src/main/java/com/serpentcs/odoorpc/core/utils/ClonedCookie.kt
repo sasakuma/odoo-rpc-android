@@ -1,10 +1,12 @@
 package com.serpentcs.odoorpc.core.utils
 
+import android.annotation.SuppressLint
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import io.mironov.smuggler.AutoParcelable
 import okhttp3.Cookie
 
+@SuppressLint("ParcelCreator")
 data class ClonedCookie(
 
         @field:Expose
