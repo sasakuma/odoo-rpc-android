@@ -5,6 +5,7 @@ apply plugin: "io.mironov.smuggler"
 
 android {
     compileSdkVersion 26
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "com.serpentcs.odoorpc"
         minSdkVersion 16
