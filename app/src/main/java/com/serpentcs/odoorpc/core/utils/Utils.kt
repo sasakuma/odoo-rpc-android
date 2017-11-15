@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
+import android.os.Handler
 import android.support.v13.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -66,7 +67,7 @@ fun Context.loginOdooUser(odooUser: OdooUser): OdooUser {
     do {
         val user = getActiveOdooUser()
         if (user != null) {
-            logout(user)
+            logoutOdooUser(user)
         }
     } while (user != null)
     val accountManager = AccountManager.get(this)
@@ -75,9 +76,23 @@ fun Context.loginOdooUser(odooUser: OdooUser): OdooUser {
     return odooUserByAndroidName(odooUser.androidName)!!
 }
 
-fun Context.logout(odooUser: OdooUser) {
+fun Context.logoutOdooUser(odooUser: OdooUser) {
     val accountManager = AccountManager.get(this)
     accountManager.setUserData(odooUser.account, "active", "false")
+}
+
+fun Context.deleteOdooUser(odooUser: OdooUser): Boolean {
+    val accountManager = AccountManager.get(this)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+        accountManager.removeAccountExplicitly(odooUser.account)
+    } else {
+        val result = accountManager.removeAccount(odooUser.account, { future ->
+            logI("Context.deleteOdooUser", "future.result: " + future.result)
+            logI("Context.deleteOdooUser", "future.isDone: " + future.isDone)
+            logI("Context.deleteOdooUser", "future.isCancelled: " + future.isCancelled)
+        }, Handler(this.mainLooper))
+        result != null && result.result != null && result.result!!
+    }
 }
 
 fun AppCompatActivity.hideSoftKeyboard() {

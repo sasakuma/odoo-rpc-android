@@ -1,11 +1,11 @@
 package com.serpentcs.odoorpc
 
-import android.app.Application
+import android.support.multidex.MultiDexApplication
 import com.serpentcs.odoorpc.core.utils.CookiePrefs
 import com.serpentcs.odoorpc.core.utils.LetterTileProvider
 import com.serpentcs.odoorpc.core.utils.Retrofit2Helper
 
-class App : Application() {
+class App : MultiDexApplication() {
 
     companion object {
         @JvmField

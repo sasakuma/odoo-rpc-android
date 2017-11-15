@@ -10,6 +10,7 @@
     <string name="action_profile">Profile</string>
     <string name="action_add_account">Add account</string>
     <string name="action_manage_account">Manage Accounts</string>
+    <string name="manage_account_remove_error">Failed to remove account</string>
     <string name="profile_full_name">Name:- N/A</string>
     <string name="profile_email">Email:- N/A</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

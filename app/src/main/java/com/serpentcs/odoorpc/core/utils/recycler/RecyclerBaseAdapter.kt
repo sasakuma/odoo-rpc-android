@@ -17,8 +17,8 @@ import com.serpentcs.odoorpc.databinding.ItemViewRecyclerMoreBinding
 
 
 abstract class RecyclerBaseAdapter(
-        protected val items: ArrayList<Any>,
-        protected var recyclerView: RecyclerView
+        @Suppress("MemberVisibilityCanPrivate") protected val items: ArrayList<Any>,
+        @Suppress("MemberVisibilityCanPrivate") protected var recyclerView: RecyclerView
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
     companion object {
@@ -199,6 +199,7 @@ abstract class RecyclerBaseAdapter(
         }
     }
 
+    @Suppress("MemberVisibilityCanPrivate")
     fun setupScrollListener(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView
         val layoutManager = recyclerView.layoutManager
@@ -239,7 +240,7 @@ abstract class RecyclerBaseAdapter(
         }
     }
 
-    fun clear() {
+    open fun clear() {
         val start = 0
         val count = itemCount
         items.clear()
