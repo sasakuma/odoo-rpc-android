@@ -25,6 +25,10 @@ class ManageAccountActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        binding.toolbar.setNavigationOnClickListener {
+            this@ManageAccountActivity.onBackPressed()
+        }
+
         val users = getOdooUsers()
         val layoutManager = LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false

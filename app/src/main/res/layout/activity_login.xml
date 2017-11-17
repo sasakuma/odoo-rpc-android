@@ -327,6 +327,16 @@
                             tools:text="Odoo Version 10.0 is compatible" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/bnOtherAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/action_login_other_account"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+                    android:textColor="@color/icons"
+                    android:visibility="gone" />
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>

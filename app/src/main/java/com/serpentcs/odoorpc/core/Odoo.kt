@@ -37,7 +37,7 @@ object Odoo {
     var host: String = String()
         set(value) {
             field = value
-            retrofit2Helper.host = host
+            retrofit2Helper.host = value
         }
 
     var user: OdooUser = OdooUser()
@@ -193,7 +193,7 @@ object Odoo {
 
     fun searchRead(
             model: String,
-            fields: List<String> = listOf("id", "name"),
+            fields: List<String> = listOf(),
             domain: List<List<Any>> = listOf(),
             offset: Int = 0,
             limit: Int = 0,

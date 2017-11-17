@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Base64
 import com.bumptech.glide.Glide
+import com.serpentcs.odoorpc.authenticator.LoginActivity
 import com.serpentcs.odoorpc.authenticator.ManageAccountActivity
 import com.serpentcs.odoorpc.authenticator.ProfileActivity
 import com.serpentcs.odoorpc.core.Odoo
@@ -121,6 +122,9 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_add_account -> {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.putExtra(LoginActivity.ADD_ACCOUNT_APP, true)
+                    startActivity(intent)
                     true
                 }
                 R.id.nav_manage_account -> {
@@ -133,7 +137,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        Odoo.searchRead("res.partner") { searchRead ->
+        Odoo.searchRead("res.partner", listOf("id", "name")) { searchRead ->
             if (searchRead.isSuccessful) {
                 logD(TAG, searchRead.result.records.toString())
             } else {

@@ -63,7 +63,7 @@ fun Context.getActiveOdooUser(): OdooUser? {
     return null
 }
 
-fun Context.loginOdooUser(odooUser: OdooUser): OdooUser {
+fun Context.loginOdooUser(odooUser: OdooUser): OdooUser? {
     do {
         val user = getActiveOdooUser()
         if (user != null) {
@@ -73,7 +73,7 @@ fun Context.loginOdooUser(odooUser: OdooUser): OdooUser {
     val accountManager = AccountManager.get(this)
     accountManager.setUserData(odooUser.account, "active", "true")
 
-    return odooUserByAndroidName(odooUser.androidName)!!
+    return getActiveOdooUser()
 }
 
 fun Context.logoutOdooUser(odooUser: OdooUser) {
@@ -128,7 +128,7 @@ fun AppCompatActivity.showMessage(
     return alertDialog!!
 }
 
-fun AppCompatActivity.showExitMessage(message: String) {
+fun AppCompatActivity.closeApp(message: String = getString(R.string.generic_error)) {
     showMessage(getString(R.string.fatal_error), message, false, getString(R.string.exit)) { _, _ ->
         ActivityCompat.finishAffinity(this)
     }

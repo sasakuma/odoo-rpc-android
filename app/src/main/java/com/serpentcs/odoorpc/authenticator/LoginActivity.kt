@@ -6,6 +6,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.v4.app.TaskStackBuilder
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
@@ -29,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
 
         @JvmField
         val ADD_ACCOUNT: String = "authenticator_add_account"
+        val ADD_ACCOUNT_APP: String = "authenticator_add_account_from_app"
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -236,18 +238,18 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             } else {
                                 logW(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
-                                showExitMessage(list.errorMessage)
+                                closeApp(list.errorMessage)
                             }
                         }
                     } else {
-                        showExitMessage(getString(
+                        closeApp(getString(
                                 R.string.login_server_error,
                                 versionInfo.result.serverVersion
                         ))
                     }
                 } else {
                     logW(TAG, "Error: " + versionInfo.errorCode + ": " + versionInfo.errorMessage)
-                    showExitMessage(versionInfo.errorMessage)
+                    closeApp(versionInfo.errorMessage)
                 }
             }
         }
@@ -374,6 +376,14 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
+        val users = getOdooUsers()
+        if (users.isNotEmpty()) {
+            binding.bnOtherAccount.visibility = View.VISIBLE
+            binding.bnOtherAccount.setOnClickListener {
+                startActivity(Intent(this@LoginActivity, ManageAccountActivity::class.java))
+            }
+        }
     }
 
     private fun resetLoginLayout() {
@@ -423,7 +433,14 @@ class LoginActivity : AppCompatActivity() {
                 super.onPostExecute(result)
                 if (result) {
                     val intent = intent
-                    if (intent != null && intent.hasExtra(ADD_ACCOUNT)) {
+                    if (intent != null && intent.hasExtra(ADD_ACCOUNT_APP)) {
+                        TaskStackBuilder.create(this@LoginActivity)
+                                .addNextIntent(Intent(
+                                        this@LoginActivity,
+                                        MainActivity::class.java
+                                ))
+                                .startActivities()
+                    } else if (intent != null && intent.hasExtra(ADD_ACCOUNT)) {
                         setResult(Activity.RESULT_OK)
                         finish()
                     } else {

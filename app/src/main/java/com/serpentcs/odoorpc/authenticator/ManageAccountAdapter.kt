@@ -13,11 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.serpentcs.odoorpc.R
+import com.serpentcs.odoorpc.core.Odoo
 import com.serpentcs.odoorpc.core.OdooUser
-import com.serpentcs.odoorpc.core.utils.deleteOdooUser
-import com.serpentcs.odoorpc.core.utils.getActiveOdooUser
+import com.serpentcs.odoorpc.core.utils.*
 import com.serpentcs.odoorpc.core.utils.recycler.RecyclerBaseAdapter
-import com.serpentcs.odoorpc.core.utils.showMessage
 import com.serpentcs.odoorpc.databinding.ItemViewManageAccountBinding
 
 class ManageAccountAdapter(
@@ -91,61 +90,89 @@ class ManageAccountAdapter(
                     binding.tvHost.text = item.host
 
                     val activeUser = activity.getActiveOdooUser()
-                    if (activeUser != null) {
-                        if (item == activeUser) {
-                            binding.civLogin.visibility = View.GONE
-                            binding.civLogout.visibility = View.VISIBLE
-                        } else {
-                            binding.civLogin.visibility = View.VISIBLE
-                            binding.civLogout.visibility = View.GONE
-                        }
-                    } else {
+                    if (activeUser != null && item == activeUser) {
                         binding.civLogin.visibility = View.GONE
+                        binding.civLogout.visibility = View.VISIBLE
+                    } else {
+                        binding.civLogin.visibility = View.VISIBLE
                         binding.civLogout.visibility = View.GONE
                     }
 
-                    if (!binding.civLogin.hasOnClickListeners()) {
-                        binding.civLogin.setOnClickListener {
-                            val clickedPosition = baseHolder.adapterPosition
-                            val clickedItem = items[clickedPosition] as OdooUser
+                    binding.civLogin.setOnClickListener {
+                        val clickedPosition = baseHolder.adapterPosition
+                        val clickedItem = items[clickedPosition] as OdooUser
+                        Odoo.user = clickedItem
+                        Odoo.authenticate(
+                                clickedItem.login, clickedItem.password,
+                                clickedItem.database, true
+                        ) { authenticate ->
+                            if (authenticate.isSuccessful) {
+                                object : AsyncTask<OdooUser, Unit, OdooUser?>() {
+                                    override fun doInBackground(vararg params: OdooUser): OdooUser? =
+                                            activity.loginOdooUser(params[0])
 
-                        }
-                    }
-
-                    if (!binding.civLogout.hasOnClickListeners()) {
-                        binding.civLogout.setOnClickListener {
-                            val clickedPosition = baseHolder.adapterPosition
-                            val clickedItem = items[clickedPosition] as OdooUser
-
-                        }
-                    }
-
-                    if (!binding.civDelete.hasOnClickListeners()) {
-                        binding.civDelete.setOnClickListener {
-                            val clickedPosition = baseHolder.adapterPosition
-                            val clickedItem = items[clickedPosition] as OdooUser
-                            object : AsyncTask<OdooUser, Void?, Boolean>() {
-                                override fun doInBackground(vararg params: OdooUser): Boolean =
-                                        activity.deleteOdooUser(params[0])
-
-                                override fun onPostExecute(result: Boolean) {
-                                    super.onPostExecute(result)
-                                    if (result) {
-                                        removeRow(clickedPosition)
-                                        if (clickedItem == activeUser) {
+                                    override fun onPostExecute(result: OdooUser?) {
+                                        super.onPostExecute(result)
+                                        if (result != null) {
                                             TaskStackBuilder.create(activity)
                                                     .addNextIntent(Intent(
                                                             activity, SplashActivity::class.java
                                                     )).startActivities()
+                                        } else {
+                                            activity.closeApp()
                                         }
-                                    } else {
-                                        activity.showMessage(message = activity.getString(
-                                                R.string.manage_account_remove_error
-                                        ))
                                     }
-                                }
-                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, clickedItem)
+                                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, clickedItem)
+                            } else {
+                                activity.showMessage(message = authenticate.errorMessage)
+                            }
                         }
+                    }
+
+                    binding.civLogout.setOnClickListener {
+                        val clickedPosition = baseHolder.adapterPosition
+                        val clickedItem = items[clickedPosition] as OdooUser
+                        object : AsyncTask<OdooUser, Unit, Unit>() {
+                            override fun doInBackground(vararg params: OdooUser) =
+                                    activity.logoutOdooUser(params[0])
+
+                            override fun onPostExecute(result: Unit) {
+                                super.onPostExecute(result)
+                                TaskStackBuilder.create(activity)
+                                        .addNextIntent(Intent(
+                                                activity, LoginActivity::class.java
+                                        )).addNextIntent(Intent(
+                                        activity, ManageAccountActivity::class.java
+                                )).startActivities()
+                            }
+                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, clickedItem)
+                    }
+
+                    binding.civDelete.setOnClickListener {
+                        val clickedPosition = baseHolder.adapterPosition
+                        val clickedItem = items[clickedPosition] as OdooUser
+                        val clickedActiveUser = activity.getActiveOdooUser()
+                        object : AsyncTask<OdooUser, Unit, Boolean>() {
+                            override fun doInBackground(vararg params: OdooUser): Boolean =
+                                    activity.deleteOdooUser(params[0])
+
+                            override fun onPostExecute(result: Boolean) {
+                                super.onPostExecute(result)
+                                if (result) {
+                                    removeRow(clickedPosition)
+                                    if ((clickedActiveUser != null && clickedItem == clickedActiveUser)) {
+                                        TaskStackBuilder.create(activity)
+                                                .addNextIntent(Intent(
+                                                        activity, SplashActivity::class.java
+                                                )).startActivities()
+                                    }
+                                } else {
+                                    activity.showMessage(message = activity.getString(
+                                            R.string.manage_account_remove_error
+                                    ))
+                                }
+                            }
+                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, clickedItem)
                     }
                 }
             }
@@ -160,12 +187,6 @@ class ManageAccountAdapter(
         return super.getItemViewType(position)
     }
 
-    fun addRow(row: OdooUser) {
-        rowItems.add(row)
-        items.add(row)
-        notifyItemInserted(itemCount - 1)
-    }
-
     fun removeRow(position: Int) {
         @Suppress("UnnecessaryVariable")
         val start = position
@@ -176,10 +197,7 @@ class ManageAccountAdapter(
         updateRowItems()
     }
 
-    val rowItemCount: Int
-        get() = rowItems.size
-
-    fun updateRowItems() {
+    private fun updateRowItems() {
         updateSearchItems()
         rowItems.clear()
         rowItems.addAll(ArrayList(
