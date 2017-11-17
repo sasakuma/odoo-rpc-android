@@ -139,56 +139,79 @@ object Odoo {
         })
     }
 
+    private val pendingAuthenticateCallbacks = mutableListOf<(Authenticate) -> Unit>()
+
     fun authenticate(
             login: String, password: String, database: String,
             quick: Boolean = false, callback: (Authenticate) -> Unit
     ) {
-        val request = retrofit.create(AuthenticateRequest::class.java)
-        val requestBody = AuthenticateReqBody(id = jsonRpcId, params = AuthenticateParams(
-                host, login, password, database
-        ))
-        val call = request.authenticate(requestBody)
-        call.enqueue(object : Callback<Authenticate> {
-            override fun onFailure(call: Call<Authenticate>, t: Throwable) {
-                logW(TAG, "authenticate::onFailure: " + t.message)
-                callback(Authenticate(httpError = HttpError(
-                        Int.MAX_VALUE,
-                        t.message!!
-                )))
-            }
-
-            override fun onResponse(call: Call<Authenticate>, response: Response<Authenticate>) {
-                if (response.isSuccessful) {
-                    // logI(TAG, "authenticate::onResponse: Success " + response.body())
-                    val authenticateBody = response.body()!!
-                    authenticateBody.result.password = password
-                    if (!quick) {
-                        searchRead(
-                                "res.users", listOf("image"),
-                                listOf(listOf("id", "=", authenticateBody.result.uid)),
-                                0, 0, "id DESC", authenticateBody.result.userContext
-                        ) { searchRead ->
-                            if (searchRead.isSuccessful) {
-                                if (searchRead.result.records.size() > 0) {
-                                    val row = searchRead.result.records[0].asJsonObject
-                                    authenticateBody.result.imageSmall =
-                                            row.get("image").asString
-                                }
+        if (pendingAuthenticateCallbacks.isEmpty()) {
+            pendingAuthenticateCallbacks += callback
+            val request = retrofit.create(AuthenticateRequest::class.java)
+            val requestBody = AuthenticateReqBody(id = jsonRpcId, params = AuthenticateParams(
+                    host, login, password, database
+            ))
+            val call = request.authenticate(requestBody)
+            call.enqueue(object : Callback<Authenticate> {
+                override fun onFailure(call: Call<Authenticate>, t: Throwable) {
+                    logW(TAG, "authenticate::onFailure: " + t.message)
+                    (pendingAuthenticateCallbacks.size - 1 downTo 0)
+                            .map { pendingAuthenticateCallbacks.removeAt(it) }
+                            .forEach {
+                                it(Authenticate(httpError = HttpError(
+                                        Int.MAX_VALUE,
+                                        t.message!!
+                                )))
                             }
-                            callback(authenticateBody)
+                }
+
+                override fun onResponse(call: Call<Authenticate>, response: Response<Authenticate>) {
+                    if (response.isSuccessful) {
+                        // logI(TAG, "authenticate::onResponse: Success " + response.body())
+                        val authenticateBody = response.body()!!
+                        authenticateBody.result.password = password
+                        if (!quick) {
+                            searchRead(
+                                    "res.users", listOf("image"),
+                                    listOf(listOf("id", "=", authenticateBody.result.uid)),
+                                    0, 0, "id DESC", authenticateBody.result.userContext
+                            ) { searchRead ->
+                                if (searchRead.isSuccessful) {
+                                    if (searchRead.result.records.size() > 0) {
+                                        val row = searchRead.result.records[0].asJsonObject
+                                        authenticateBody.result.imageSmall =
+                                                row.get("image").asString
+                                    }
+                                }
+                                (pendingAuthenticateCallbacks.size - 1 downTo 0)
+                                        .map { pendingAuthenticateCallbacks.removeAt(it) }
+                                        .forEach {
+                                            it(authenticateBody)
+                                        }
+                            }
+                        } else {
+                            (pendingAuthenticateCallbacks.size - 1 downTo 0)
+                                    .map { pendingAuthenticateCallbacks.removeAt(it) }
+                                    .forEach {
+                                        it(authenticateBody)
+                                    }
                         }
                     } else {
-                        callback(authenticateBody)
+                        logW(TAG, "authenticate::onResponse Error: " + response.errorBody()!!.string())
+                        (pendingAuthenticateCallbacks.size - 1 downTo 0)
+                                .map { pendingAuthenticateCallbacks.removeAt(it) }
+                                .forEach {
+                                    it(Authenticate(httpError = HttpError(
+                                            response.code(),
+                                            response.errorBody()!!.string()
+                                    )))
+                                }
                     }
-                } else {
-                    logW(TAG, "authenticate::onResponse Error: " + response.errorBody()!!.string())
-                    callback(Authenticate(httpError = HttpError(
-                            response.code(),
-                            response.errorBody()!!.string()
-                    )))
                 }
-            }
-        })
+            })
+        } else {
+            pendingAuthenticateCallbacks += callback
+        }
     }
 
     fun searchRead(
