@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="user"
+            type="com.serpentcs.odoorpc.core.OdooUser" />
+    </data>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="exitUntilCollapsed|scroll|snap">
+                app:layout_scrollFlags="exitUntilCollapsed|scroll|snap"
+                app:title="@{user.name}">
 
                 <ImageView
                     android:id="@+id/ivProfile"
@@ -62,6 +70,7 @@
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{user.name}"
                     tools:text="Administrator" />
 
                 <Space
@@ -80,6 +89,7 @@
                     android:id="@+id/tvLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{user.login}"
                     tools:text="admin" />
 
                 <Space
@@ -98,6 +108,7 @@
                     android:id="@+id/tvServerURL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{user.host}"
                     tools:text="http://192.168.0.1:8069" />
 
                 <Space
@@ -116,6 +127,7 @@
                     android:id="@+id/tvDatabase"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{user.database}"
                     tools:text="db_v10" />
 
                 <Space
@@ -134,6 +146,7 @@
                     android:id="@+id/tvVersion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{user.serverVersion}"
                     tools:text="10.0" />
 
                 <Space
@@ -152,6 +165,7 @@
                     android:id="@+id/tvTimezone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{user.timezone}"
                     tools:text="Europe/Brussels" />
 
                 <Space

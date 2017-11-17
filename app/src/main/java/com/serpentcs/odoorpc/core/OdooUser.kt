@@ -22,4 +22,7 @@ data class OdooUser(
 ) {
     val androidName: String
         get() = "$login[$database]"
+
+    val timezone: String
+        get() = context["tz"].asString
 }

@@ -24,6 +24,7 @@ class ProfileActivity : AppCompatActivity() {
 
         val user = getActiveOdooUser()
         if (user != null) {
+            binding.user = user
             if (user.imageSmall != "false") {
                 val byteArray = Base64.decode(user.imageSmall, Base64.DEFAULT)
                 Glide.with(this)
@@ -36,13 +37,6 @@ class ProfileActivity : AppCompatActivity() {
                         .asBitmap()
                         .into(binding.ivProfile)
             }
-            binding.ctl.title = user.name
-            binding.tvName.text = user.name
-            binding.tvLogin.text = user.login
-            binding.tvServerURL.text = user.host
-            binding.tvDatabase.text = user.database
-            binding.tvVersion.text = user.serverVersion
-            binding.tvTimezone.text = user.context["tz"].asString
         }
     }
 }

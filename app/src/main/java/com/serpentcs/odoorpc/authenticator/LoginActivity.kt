@@ -30,6 +30,8 @@ class LoginActivity : AppCompatActivity() {
 
         @JvmField
         val ADD_ACCOUNT: String = "authenticator_add_account"
+
+        @JvmField
         val ADD_ACCOUNT_APP: String = "authenticator_add_account_from_app"
     }
 
@@ -56,8 +58,8 @@ class LoginActivity : AppCompatActivity() {
                 override fun afterTextChanged(p0: Editable?) {
                     binding.tlHost.post {
                         binding.tlHost.isErrorEnabled = false
-                        resetLoginLayout()
                     }
+                    resetLoginLayout()
                 }
 
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
@@ -65,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
             })
 
             binding.bnCheckVersion.setOnClickListener {
-                if (binding.etHost.text.toString().isEmpty()) {
+                if (binding.etHost.text.toString().trim().isEmpty()) {
                     binding.tlHost.error = getString(R.string.login_host_error)
                     return@setOnClickListener
                 }
@@ -105,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                         Retrofit2Helper.Companion.Protocol.HTTPS
                     }
                 }
-                Odoo.host = binding.etHost.text.toString()
+                Odoo.host = binding.etHost.text.toString().trim()
                 Odoo.versionInfo { versionInfo ->
                     binding.spProtocol.post {
                         binding.spProtocol.isEnabled = true
@@ -405,8 +407,7 @@ class LoginActivity : AppCompatActivity() {
             @Suppress("UNCHECKED_CAST")
             val adapter = binding.spDatabase.adapter as ArrayAdapter<String>
             adapter.clear()
-        }
-        binding.spDatabase.post {
+
             binding.spDatabase.isEnabled = true
         }
         binding.llError.post {
@@ -437,7 +438,7 @@ class LoginActivity : AppCompatActivity() {
                         TaskStackBuilder.create(this@LoginActivity)
                                 .addNextIntent(Intent(
                                         this@LoginActivity,
-                                        MainActivity::class.java
+                                        SplashActivity::class.java
                                 ))
                                 .startActivities()
                     } else if (intent != null && intent.hasExtra(ADD_ACCOUNT)) {

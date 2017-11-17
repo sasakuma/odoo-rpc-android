@@ -59,8 +59,9 @@ class ManageAccountAdapter(
             when (getItemViewType(basePosition)) {
                 VIEW_TYPE_ITEM -> {
                     val holder = baseHolder as ManageAccountViewHolder
-                    val binding = holder.binding
                     val item = items[position] as OdooUser
+                    val binding = holder.binding
+                    binding.user = item
 
                     val loginDrawable = ContextCompat
                             .getDrawable(activity, R.drawable.ic_done_all_white_24dp)
@@ -85,9 +86,6 @@ class ManageAccountAdapter(
                                 .asBitmap()
                                 .into(binding.civImage)
                     }
-
-                    binding.tvName.text = item.name
-                    binding.tvHost.text = item.host
 
                     val activeUser = activity.getActiveOdooUser()
                     if (activeUser != null && item == activeUser) {
