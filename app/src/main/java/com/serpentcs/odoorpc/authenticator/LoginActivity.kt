@@ -108,7 +108,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 Odoo.host = binding.etHost.text.toString().trim()
-                Odoo.versionInfo { versionInfo ->
+                Odoo.versionInfo {
                     binding.spProtocol.post {
                         binding.spProtocol.isEnabled = true
                     }
@@ -124,11 +124,11 @@ class LoginActivity : AppCompatActivity() {
                     binding.llCheckVersionResult.post {
                         binding.llCheckVersionResult.visibility = View.VISIBLE
                     }
-                    if (versionInfo.isSuccessful) {
+                    if (isSuccessful) {
                         // logD(TAG, versionInfo.toString())
-                        if (versionInfo.result.serverVersion in Odoo.supportedOdooVersions) {
-                            Odoo.list { list ->
-                                if (list.isSuccessful) {
+                        if (result.serverVersion in Odoo.supportedOdooVersions) {
+                            Odoo.list {
+                                if (isSuccessful) {
                                     // logD(TAG, list.toString())
                                     binding.ivSuccess.post {
                                         binding.ivSuccess.visibility = View.VISIBLE
@@ -136,19 +136,19 @@ class LoginActivity : AppCompatActivity() {
                                     binding.tvServerMessage.post {
                                         binding.tvServerMessage.text = getString(
                                                 R.string.login_server_success,
-                                                versionInfo.result.serverVersion
+                                                this@versionInfo.result.serverVersion
                                         )
                                     }
                                     binding.spDatabase.post {
                                         binding.spDatabase.adapter = ArrayAdapter<String>(
                                                 this@LoginActivity,
                                                 R.layout.support_simple_spinner_dropdown_item_dark,
-                                                list.result
+                                                result
                                         )
                                     }
                                     binding.llDatabase.post {
                                         binding.llDatabase.visibility =
-                                                if (list.result.size == 1) {
+                                                if (result.size == 1) {
                                                     View.GONE
                                                 } else {
                                                     View.VISIBLE
@@ -158,12 +158,12 @@ class LoginActivity : AppCompatActivity() {
                                         binding.llLogin.visibility = View.VISIBLE
                                     }
                                 } else {
-                                    logW(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
+                                    logW(TAG, "Error: $errorCode: $errorMessage")
                                     binding.ivFail.post {
                                         binding.ivFail.visibility = View.VISIBLE
                                     }
                                     binding.tvServerMessage.post {
-                                        binding.tvServerMessage.text = list.errorMessage
+                                        binding.tvServerMessage.text = errorMessage
                                     }
                                 }
                             }
@@ -177,12 +177,12 @@ class LoginActivity : AppCompatActivity() {
                             binding.tvServerMessage.post {
                                 binding.tvServerMessage.text = getString(
                                         R.string.login_server_error,
-                                        versionInfo.result.serverVersion
+                                        result.serverVersion
                                 )
                             }
                         }
                     } else {
-                        logW(TAG, "Error: " + versionInfo.errorCode + ": " + versionInfo.errorMessage)
+                        logW(TAG, "Error: $errorCode: $errorMessage")
                         binding.ivSuccess.post {
                             binding.ivSuccess.visibility = View.GONE
                         }
@@ -190,7 +190,7 @@ class LoginActivity : AppCompatActivity() {
                             binding.ivFail.visibility = View.VISIBLE
                         }
                         binding.tvServerMessage.post {
-                            binding.tvServerMessage.text = versionInfo.errorMessage
+                            binding.tvServerMessage.text = errorMessage
                         }
                     }
                 }
@@ -211,25 +211,25 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             Odoo.host = getString(R.string.host_url)
-            Odoo.versionInfo { versionInfo ->
+            Odoo.versionInfo {
                 binding.llCheckVersionProgress.post {
                     binding.llCheckVersionProgress.visibility = View.GONE
                 }
-                if (versionInfo.isSuccessful) {
+                if (isSuccessful) {
                     // logD(TAG, versionInfo.toString())
-                    if (versionInfo.result.serverVersion in Odoo.supportedOdooVersions) {
-                        Odoo.list { list ->
-                            if (list.isSuccessful) {
+                    if (result.serverVersion in Odoo.supportedOdooVersions) {
+                        Odoo.list {
+                            if (isSuccessful) {
                                 binding.spDatabase.post {
                                     binding.spDatabase.adapter = ArrayAdapter<String>(
                                             this@LoginActivity,
                                             R.layout.support_simple_spinner_dropdown_item_dark,
-                                            list.result
+                                            result
                                     )
                                 }
                                 binding.llDatabase.post {
                                     binding.llDatabase.visibility =
-                                            if (list.result.size == 1) {
+                                            if (result.size == 1) {
                                                 View.GONE
                                             } else {
                                                 View.VISIBLE
@@ -239,19 +239,19 @@ class LoginActivity : AppCompatActivity() {
                                     binding.llLogin.visibility = View.VISIBLE
                                 }
                             } else {
-                                logW(TAG, "Error: " + list.errorCode + ": " + list.errorMessage)
-                                closeApp(list.errorMessage)
+                                logW(TAG, "Error: $errorCode: $errorMessage")
+                                closeApp(errorMessage)
                             }
                         }
                     } else {
                         closeApp(getString(
                                 R.string.login_server_error,
-                                versionInfo.result.serverVersion
+                                result.serverVersion
                         ))
                     }
                 } else {
-                    logW(TAG, "Error: " + versionInfo.errorCode + ": " + versionInfo.errorMessage)
-                    closeApp(versionInfo.errorMessage)
+                    logW(TAG, "Error: $errorCode: $errorMessage")
+                    closeApp(errorMessage)
                 }
             }
         }
@@ -338,12 +338,12 @@ class LoginActivity : AppCompatActivity() {
             val login = binding.etLogin.text.toString()
             val password = binding.etPassword.text.toString()
             val database = selectedDatabase.toString()
-            Odoo.authenticate(login, password, database) { authenticate ->
-                if (authenticate.isSuccessful) {
+            Odoo.authenticate(login, password, database) {
+                if (isSuccessful) {
                     binding.tvLoginProgress.post {
                         binding.tvLoginProgress.text = getString(R.string.login_success)
                     }
-                    createAccount(authenticate.result)
+                    createAccount(result)
                 } else {
                     binding.spProtocol.post {
                         binding.spProtocol.isEnabled = true
@@ -370,7 +370,7 @@ class LoginActivity : AppCompatActivity() {
                         binding.llProgress.visibility = View.GONE
                     }
                     binding.tvLoginError.post {
-                        binding.tvLoginError.text = authenticate.errorMessage
+                        binding.tvLoginError.text = errorMessage
                     }
                     binding.llError.post {
                         binding.llError.visibility = View.VISIBLE

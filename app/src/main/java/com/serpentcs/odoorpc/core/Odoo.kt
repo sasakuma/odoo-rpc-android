@@ -27,7 +27,7 @@ import retrofit2.Response
 
 object Odoo {
 
-    private val TAG = "Odoo"
+    val TAG = "Odoo"
 
     var protocol: Retrofit2Helper.Companion.Protocol = Retrofit2Helper.Companion.Protocol.HTTP
         set(value) {
@@ -69,10 +69,10 @@ object Odoo {
             protocol,
             host
     )
-    private val retrofit
+    val retrofit
         get() = retrofit2Helper.retrofit
 
-    private var jsonRpcId: String = "0"
+    var jsonRpcId: String = "0"
         get() {
             field = (field.toInt() + 1).toString()
             if (user.id > 0) {
@@ -83,7 +83,7 @@ object Odoo {
 
     val supportedOdooVersions = listOf("10.0", "10.saas~16+e")
 
-    fun versionInfo(callback: (VersionInfo) -> Unit) {
+    inline fun versionInfo(crossinline callback: VersionInfo.() -> Unit) {
         val request = retrofit.create(VersionInfoRequest::class.java)
         val requestBody = VersionInfoReqBody(id = jsonRpcId)
         val call = request.versionInfo(requestBody)
@@ -111,7 +111,7 @@ object Odoo {
         })
     }
 
-    fun list(callback: (OdooList) -> Unit) {
+    inline fun list(crossinline callback: OdooList.() -> Unit) {
         val request = retrofit.create(ListRequest::class.java)
         val requestBody = ListReqBody(id = jsonRpcId)
         val call = request.list(requestBody)
@@ -139,11 +139,11 @@ object Odoo {
         })
     }
 
-    private val pendingAuthenticateCallbacks = mutableListOf<(Authenticate) -> Unit>()
+    val pendingAuthenticateCallbacks = mutableListOf<(Authenticate) -> Unit>()
 
     fun authenticate(
             login: String, password: String, database: String,
-            quick: Boolean = false, callback: (Authenticate) -> Unit
+            quick: Boolean = false, callback: Authenticate.() -> Unit
     ) {
         if (pendingAuthenticateCallbacks.isEmpty()) {
             pendingAuthenticateCallbacks += callback
@@ -175,10 +175,10 @@ object Odoo {
                                     "res.users", listOf("image"),
                                     listOf(listOf("id", "=", authenticateBody.result.uid)),
                                     0, 0, "id DESC", authenticateBody.result.userContext
-                            ) { searchRead ->
-                                if (searchRead.isSuccessful) {
-                                    if (searchRead.result.records.size() > 0) {
-                                        val row = searchRead.result.records[0].asJsonObject
+                            ) {
+                                if (isSuccessful) {
+                                    if (result.records.size() > 0) {
+                                        val row = result.records[0].asJsonObject
                                         authenticateBody.result.imageSmall =
                                                 row.get("image").asString
                                     }
@@ -214,7 +214,7 @@ object Odoo {
         }
     }
 
-    fun searchRead(
+    inline fun searchRead(
             model: String,
             fields: List<String> = listOf(),
             domain: List<List<Any>> = listOf(),
@@ -222,7 +222,7 @@ object Odoo {
             limit: Int = 0,
             sort: String = String(),
             context: JsonObject = user.context,
-            callback: (SearchRead) -> Unit
+            crossinline callback: SearchRead.() -> Unit
     ) {
         val request = retrofit.create(SearchReadRequest::class.java)
         val requestBody = SearchReadReqBody(id = jsonRpcId, params = SearchReadParams(

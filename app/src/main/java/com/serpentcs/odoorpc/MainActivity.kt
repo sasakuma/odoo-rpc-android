@@ -136,28 +136,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        val user = getActiveOdooUser()!!
-        Odoo.authenticate(user.login, user.password, user.database, true) {
-            logI(TAG, "1")
-        }
-        Odoo.authenticate(user.login, user.password, user.database, true) {
-            logI(TAG, "2")
-        }
-        Odoo.authenticate(user.login, user.password, user.database, true) {
-            logI(TAG, "3")
-        }
-        Odoo.authenticate(user.login, user.password, user.database, true) {
-            logI(TAG, "4")
-        }
-        Odoo.authenticate(user.login, user.password, user.database, true) {
-            logI(TAG, "5")
-        }
-        Odoo.searchRead("res.partner", listOf("id", "name")) { searchRead ->
-            if (searchRead.isSuccessful) {
-                logD(TAG, searchRead.result.records.toString())
+        
+        Odoo.searchRead("res.partner", listOf("id", "name")) {
+            if (isSuccessful) {
+                logD(TAG, result.records.toString())
             } else {
-                logE(TAG, searchRead.errorMessage)
+                logE(TAG, errorMessage)
             }
         }
     }

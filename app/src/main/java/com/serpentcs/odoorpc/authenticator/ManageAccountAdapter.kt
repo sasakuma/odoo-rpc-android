@@ -103,8 +103,8 @@ class ManageAccountAdapter(
                         Odoo.authenticate(
                                 clickedItem.login, clickedItem.password,
                                 clickedItem.database, true
-                        ) { authenticate ->
-                            if (authenticate.isSuccessful) {
+                        ) {
+                            if (isSuccessful) {
                                 object : AsyncTask<OdooUser, Unit, OdooUser?>() {
                                     override fun doInBackground(vararg params: OdooUser): OdooUser? =
                                             activity.loginOdooUser(params[0])
@@ -122,7 +122,7 @@ class ManageAccountAdapter(
                                     }
                                 }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, clickedItem)
                             } else {
-                                activity.showMessage(message = authenticate.errorMessage)
+                                activity.showMessage(message = errorMessage)
                             }
                         }
                     }
