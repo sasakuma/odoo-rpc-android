@@ -13,6 +13,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.serpentcs.odoorpc.App
 import com.serpentcs.odoorpc.MainActivity
 import com.serpentcs.odoorpc.R
 import com.serpentcs.odoorpc.core.Odoo
@@ -22,6 +23,7 @@ import com.serpentcs.odoorpc.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 
+    private lateinit var app: App
     private lateinit var binding: ActivityLoginBinding
 
     companion object {
@@ -37,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+        app = application as App
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         setSupportActionBar(binding.tb)
         supportActionBar?.hide()
@@ -424,6 +427,8 @@ class LoginActivity : AppCompatActivity() {
                         if (odooUser != null) {
                             loginOdooUser(odooUser)
                             Odoo.user = odooUser
+                            app.cookiePrefs.setCookies(Odoo.pendingAuthenticateCookies)
+                            Odoo.pendingAuthenticateCookies.clear()
                         }
                         true
                     } else {

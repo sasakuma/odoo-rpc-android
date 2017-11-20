@@ -1,6 +1,7 @@
 package com.serpentcs.odoorpc.core.utils
 
 import com.serpentcs.odoorpc.App
+import com.serpentcs.odoorpc.core.Odoo
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
@@ -56,7 +57,9 @@ class Retrofit2Helper(
                             override fun saveFromResponse(url: HttpUrl?, cookies: MutableList<Cookie>?) {
                                 if (url.toString().contains("/web/session/authenticate")) {
                                     this.cookies = cookies
-                                    app.cookiePrefs.setCookies(cookies)
+                                    if (cookies != null) {
+                                        Odoo.pendingAuthenticateCookies.addAll(cookies)
+                                    }
                                 }
                             }
 

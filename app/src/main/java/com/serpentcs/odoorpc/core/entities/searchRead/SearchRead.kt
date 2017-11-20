@@ -19,7 +19,7 @@ data class SearchRead(
         @Suppress("MemberVisibilityCanPrivate")
         val httpError: HttpError = HttpError()
 ) {
-    val isSuccessful get() = httpError.code == 0 && odooError.code == 0
+    val isSuccessful get() = httpError.code == 0 && odooError.message.isEmpty()
     val isHttpError get() = httpError.code != 0
     val isOdooError get() = odooError.code != 0
     val errorCode get() = if (httpError.code != 0) httpError.code else odooError.code

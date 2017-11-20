@@ -21,6 +21,7 @@ import com.serpentcs.odoorpc.core.web.database.list.ListRequest
 import com.serpentcs.odoorpc.core.web.dataset.searchRead.SearchReadRequest
 import com.serpentcs.odoorpc.core.web.session.authenticate.AuthenticateRequest
 import com.serpentcs.odoorpc.core.web.webclient.versionInfo.VersionInfoRequest
+import okhttp3.Cookie
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -140,6 +141,7 @@ object Odoo {
     }
 
     val pendingAuthenticateCallbacks = mutableListOf<(Authenticate) -> Unit>()
+    val pendingAuthenticateCookies: MutableList<Cookie> = mutableListOf()
 
     fun authenticate(
             login: String, password: String, database: String,
@@ -170,7 +172,7 @@ object Odoo {
                         // logI(TAG, "authenticate::onResponse: Success " + response.body())
                         val authenticateBody = response.body()!!
                         authenticateBody.result.password = password
-                        if (!quick) {
+                        if (!quick && authenticateBody.isSuccessful) {
                             searchRead(
                                     "res.users", listOf("image"),
                                     listOf(listOf("id", "=", authenticateBody.result.uid)),
